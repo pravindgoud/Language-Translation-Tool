@@ -1,13 +1,13 @@
 async function translateText() {
 
     const text =
-        document.getElementById("inputText").value;
+    document.getElementById("inputText").value;
 
     const sourceLang =
-        document.getElementById("sourceLang").value;
+    document.getElementById("sourceLang").value;
 
     const targetLang =
-        document.getElementById("targetLang").value;
+    document.getElementById("targetLang").value;
 
     if(text.trim() === ""){
         alert("Please enter text");
@@ -16,32 +16,55 @@ async function translateText() {
 
     try {
 
-        const response = await fetch(
-            "https://translate.argosopentech.com/translate",
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    q: text,
-                    source: sourceLang,
-                    target: targetLang,
-                    format: "text"
-                })
-            }
-        );
+        const url =
+`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${sourceLang}|${targetLang}`;
 
-        const data = await response.json();
+        const response =
+        await fetch(url);
+
+        const data =
+        await response.json();
 
         document.getElementById(
-            "translatedText"
+          "translatedText"
         ).innerText =
-            data.translatedText;
+        data.responseData.translatedText;
 
-    } catch(error) {
+    }
 
+    catch(error){
         console.log(error);
         alert("Translation Failed!");
     }
+}
+
+
+// Copy Button
+function copyText(){
+
+    const text =
+    document.getElementById(
+      "translatedText"
+    ).innerText;
+
+    navigator.clipboard
+    .writeText(text);
+
+    alert("Copied!");
+}
+
+
+// Speak Button
+function speakText(){
+
+    const text =
+    document.getElementById(
+      "translatedText"
+    ).innerText;
+
+    const speech =
+    new SpeechSynthesisUtterance(text);
+
+    window.speechSynthesis
+    .speak(speech);
 }
